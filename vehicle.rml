@@ -1,0 +1,33 @@
+<Rive version="1" kind="fragment">
+    <!-- Simple Bruno-style vehicle demo: ScriptedLayout owns physics + draw. -->
+    <Artboard defaultStateMachineId="8:7" clip="true" x="900" y="0" width="800" height="500" styleId="8:5" name="vehicle" id="8:2">
+        <Fill name="Background">
+            <SolidColor colorValue="FF1C2430" name="Color"/>
+        </Fill>
+        <LayoutComponentStyle name="Artboard Style" id="8:5"/>
+
+        <LayoutComponent width="800" height="500" styleId="8:11" name="Root" id="8:10">
+            <LayoutComponentStyle layoutWidthScaleType="fill" layoutHeightScaleType="fill" widthUnitsValue="points" heightUnitsValue="points" name="Layout Style" id="8:11"/>
+            <ScriptedLayout scriptAssetId="8:80" name="VehicleSim" id="8:12">
+                <FocusData id="8:13"/>
+            </ScriptedLayout>
+        </LayoutComponent>
+
+        <StateMachine name="State Machine 1" id="8:7">
+            <StateMachineLayer name="Layer 1" id="8:8">
+                <AnyState x="200" y="-120"/>
+                <ExitState x="400" y="-120"/>
+                <EntryState>
+                    <StateTransition stateToId="8:90"/>
+                </EntryState>
+                <AnimationState x="200" animationId="8:91" id="8:90">
+                    <FocusActionTarget targetId="8:12"/>
+                </AnimationState>
+            </StateMachineLayer>
+        </StateMachine>
+
+        <LinearAnimation duration="1" name="Idle" id="8:91"/>
+    </Artboard>
+
+    <ScriptAsset file="vehicle.luau" name="vehicle" id="8:80"/>
+</Rive>
