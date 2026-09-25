@@ -2,7 +2,7 @@
     <!-- Simple Bruno-style vehicle demo: ScriptedLayout owns physics + draw. -->
     <Artboard defaultStateMachineId="8:7" clip="true" x="900" y="0" width="800" height="500" styleId="8:5" name="vehicle" id="8:2">
         <Fill name="Background">
-            <SolidColor colorValue="FF1C2430" name="Color"/>
+            <SolidColor colorValue="FF2E6E48" name="Color"/>
         </Fill>
         <LayoutComponentStyle name="Artboard Style" id="8:5"/>
 
@@ -29,5 +29,9 @@
         <LinearAnimation duration="1" name="Idle" id="8:91"/>
     </Artboard>
 
+    <BlobAsset file="ban.glb" name="ban" id="8:100"/>
+    <BlobAsset file="mobil.glb" name="mobil" id="8:103"/>
+    <ScriptAsset file="json.luau" isModule="true" name="json" id="8:101"/>
+    <ScriptAsset file="wheel_glb.luau" isModule="true" name="wheel_glb" id="8:102"/>
     <ScriptAsset file="vehicle.luau" name="vehicle" id="8:80"/>
 </Rive>
