@@ -1,8 +1,8 @@
 <Rive version="1" kind="fragment">
     <!-- Simple Bruno-style vehicle demo: ScriptedLayout owns physics + draw. -->
     <Artboard defaultStateMachineId="8:7" clip="true" x="900" y="0" width="800" height="500" styleId="8:5" name="vehicle" id="8:2">
-        <Fill name="Background">
-            <SolidColor colorValue="FF2E6E48" name="Color"/>
+        <Fill name="Background" id="0:134131">
+            <SolidColor colorValue="FF2E6E48" name="Color" id="0:134132"/>
         </Fill>
         <LayoutComponentStyle name="Artboard Style" id="8:5"/>
 
@@ -15,13 +15,13 @@
 
         <StateMachine name="State Machine 1" id="8:7">
             <StateMachineLayer name="Layer 1" id="8:8">
-                <AnyState x="200" y="-120"/>
-                <ExitState x="400" y="-120"/>
-                <EntryState>
-                    <StateTransition stateToId="8:90"/>
+                <AnyState x="200" y="-120" id="0:134133"/>
+                <ExitState x="400" y="-120" id="0:134134"/>
+                <EntryState id="0:134135">
+                    <StateTransition stateToId="8:90" id="0:134136"/>
                 </EntryState>
                 <AnimationState x="200" animationId="8:91" id="8:90">
-                    <FocusActionTarget targetId="8:12"/>
+                    <FocusActionTarget targetId="8:12" id="0:134137"/>
                 </AnimationState>
             </StateMachineLayer>
         </StateMachine>

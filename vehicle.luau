@@ -663,6 +663,38 @@ local function printTuneLegend(self: Vehicle3D)
 	end
 end
 
+-- Wheel hub hangs on chassis -Y by suspension length; world pose follows body
+-- yaw/pitch/roll so airborne wheels stay bolted to the car (not world-upright).
+local function wheelHubWorld(self: Vehicle3D, w: Wheel): (number, number, number)
+	local lx, ly, lz = w.ox, -w.suspension, w.oz
+	local cr, sr = math.cos(self.bodyRoll), math.sin(self.bodyRoll)
+	local x1, y1, z1 = lx, ly * cr - lz * sr, ly * sr + lz * cr
+	local cp, sp = math.cos(self.bodyPitch), math.sin(self.bodyPitch)
+	local x2, y2, z2 = x1 * cp - y1 * sp, x1 * sp + y1 * cp, z1
+	local cy, sy = math.cos(self.yaw), math.sin(self.yaw)
+	local x3 = x2 * cy + z2 * sy
+	local z3 = -x2 * sy + z2 * cy
+	return self.x + x3, self.y + y2, self.z + z3
+end
+
+local function syncWheelHubsToBody(self: Vehicle3D)
+	for i = 1, #self.wheels do
+		local w = self.wheels[i]
+		w.wx, w.hubY, w.wz = wheelHubWorld(self, w)
+	end
+end
+
+local function wheelModelMatrix(self: Vehicle3D, w: Wheel): Mat4
+	local steer = if w.isFront then self.steerAngle else 0
+	return Mat4.fromTranslation(self.x, self.y, self.z)
+		* Mat4.fromRotationY(self.yaw)
+		* Mat4.fromRotationZ(self.bodyPitch)
+		* Mat4.fromRotationX(self.bodyRoll)
+		* Mat4.fromTranslation(w.ox, -w.suspension, w.oz)
+		* Mat4.fromRotationY(steer)
+		* Mat4.fromRotationZ(w.spin)
+end
+
 local function tunePanelHeight(self: Vehicle3D): number
 	return TUNE_HEAD + TUNE_PAD + #self.tune * TUNE_ROW + TUNE_PAD
 end
@@ -2865,6 +2897,9 @@ function advance(self: Vehicle3D, seconds: number): boolean
 	self.bodyPitch += extraPitch * math.min(1, 6 * dt)
 	self.bodyRoll += (extraRoll - self.bodyRoll * 0.12) * math.min(1, 5 * dt)
 
+	-- Visual hubs follow body orientation (air + lean); contact rays still used yaw-only above
+	syncWheelHubsToBody(self)
+
 	local targetSquash = 1 - clamp((-self.vy) * 0.008 + math.abs(localAx) * 0.001, -0.08, 0.12) - self.squashPunch
 	self.bodySquash += (targetSquash - self.bodySquash) * 7 * dt
 
@@ -3643,11 +3678,7 @@ function draw(self: Vehicle3D, renderer: Renderer)
 
 			for i = 1, 4 do
 				local wh = self.wheels[i]
-				local wheelYaw = self.yaw + (if wh.isFront then self.steerAngle else 0)
-				local slopeAng = math.atan(groundSlope(wh.wx, wh.wz))
-				local wheelModel = Mat4.fromTranslation(wh.wx, wh.hubY, wh.wz)
-					* Mat4.fromRotationY(wheelYaw)
-					* Mat4.fromRotationZ(slopeAng + wh.spin)
+				local wheelModel = wheelModelMatrix(self, wh)
 				if hasGlb then
 					local model = wheelModel * self.wheelMeshOrient * Mat4.fromScale(meshScale, meshScale, meshScale)
 					for _, part in self.wheelParts do
